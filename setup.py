@@ -27,7 +27,6 @@ kwargs = {
     'version': version,
     'description': '',
     'long_description': readme,
-    'long_description_content_type': 'text/markdown',
     'author': 'cybergrind@gmail.com',
     'author_email': 'cybergrind@gmail.com',
     'maintainer': 'cybergrind@gmail.com',
@@ -49,16 +48,33 @@ kwargs = {
     'install_requires': REQUIRES,
     'tests_require': ['coverage', 'pytest'],
     'packages': find_packages(exclude=('tests', 'tests.*')),
-    'entry_points': {
-        'console_scripts': [
-            'release.py=dot_tools.scripts.release:main',
-            'handle_envrc=dot_tools.scripts.handle_envrc:main'
-        ]
-    }
 }
 
 #################### BEGIN USER OVERRIDES ####################
 # Add your customizations in this section.
+
+with open('README.md', 'r', encoding='utf-8') as f:
+    readme = f.read()
+
+REQUIRES = [
+    'fan_tools',
+]
+
+
+kwargs.update(
+    {
+        'long_description': readme,
+        'long_description_content_type': 'text/markdown',
+        'install_requires': REQUIRES,
+        'entry_points': {
+            'console_scripts': [
+                'release.py=dot_tools.scripts.release:main',
+                'handle_envrc=dot_tools.scripts.handle_envrc:main',
+                'add_dot_files==dot_tools.scripts.add_dot_files:main',
+            ]
+        },
+    }
+)
 
 ###################### END USER OVERRIDES ####################
 
