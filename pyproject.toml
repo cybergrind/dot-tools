@@ -1,0 +1,36 @@
+[metadata]
+name = 'dot-tools'
+version = '0.1.0'
+description = 'Dot files automation'
+author = 'cybergrind@gmail.com'
+author_email = 'cybergrind@gmail.com'
+license = 'MIT'
+url = 'https://github.com/_/dot-tools'
+
+[requires]
+python_version = ['3.5', '3.6', '3.7']
+
+[build-system]
+requires = ['setuptools', 'wheel']
+
+[tool.hatch.commands]
+prerelease = 'hatch build'
+
+[tool.black]
+line-length = 100
+skip-string-normalization = true
+py36 = true
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''

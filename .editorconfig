@@ -1,0 +1,11 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+max_line_length = 100
+
+[**.py]
+indent_style = space
+indent_size = 4
+emacs_py_project = (f-join (projectile-project-root) ".")
