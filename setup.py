@@ -51,7 +51,8 @@ kwargs = {
     'packages': find_packages(exclude=('tests', 'tests.*')),
     'entry_points': {
         'console_scripts': [
-            'release.py=dot_tools.scripts.release:main'
+            'release.py=dot_tools.scripts.release:main',
+            'handle_envrc=dot_tools.scripts.handle_envrc:main'
         ]
     }
 }
