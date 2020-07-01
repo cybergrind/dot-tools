@@ -18,7 +18,10 @@ TEMPLATES = {
     },
     TMPL_DIR / 'pyproject.tmpl': {
         'path': Path('pyproject.toml'),
-    }
+    },
+    TMPL_DIR / 'projectile.tmpl': {
+        'path': Path('.projectile'),
+    },
 }
 
 
