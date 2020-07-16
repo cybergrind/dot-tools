@@ -22,7 +22,7 @@ import logging
 import os
 import shutil
 
-from tipsi_tools.unix import ExecError, asucc
+from fan_tools.unix import ExecError, asucc
 
 ENVRC_HOME = "ENVRC_HOME"
 BASE_PATH = os.path.expanduser(os.environ.get(ENVRC_HOME, "~/Yandex.Disk/home/envrc"))
