@@ -73,6 +73,7 @@ kwargs.update(
                 'add_dot_files=dot_tools.scripts.add_dot_files:main',
             ]
         },
+        'include_package_data': True,
     }
 )
 
