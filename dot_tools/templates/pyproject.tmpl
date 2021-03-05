@@ -1,7 +1,8 @@
 [tool.black]
 line-length = 100
 skip-string-normalization = true
-py36 = true
+skip-magic-trailing-comma = true
+target-version = ['py38']
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -9,7 +10,7 @@ exclude = '''
   | \.hg
   | \.mypy_cache
   | \.tox
-  | \.venv
+  | venv
   | _build
   | buck-out
   | build
