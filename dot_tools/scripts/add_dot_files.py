@@ -22,9 +22,6 @@ TEMPLATES = {
     TMPL_DIR / 'projectile.tmpl': {
         'path': Path('.projectile'),
     },
-    TMPL_DIR / 'isort.tmpl': {
-        'path': Path('.isort.cfg'),
-    }
 }
 
 
