@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  traefik:
+    image: "traefik:2.5"
+    container_name: "traefik"
+    network_mode: host
+    restart: always
+    command:
+      #- "--log.level=DEBUG"
+      - "--accesslog=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.traefik.address=127.0.0.1:8007"
+      - "--certificatesresolvers.lets.acme.tlschallenge=true"
+      #- "--certificatesresolvers.lets.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.lets.acme.email=admin@perfectlabel.io"
+      - "--certificatesresolvers.lets.acme.storage=/letsencrypt/acme.json"
+    labels:
+      - "traefik.http.routers.api.rule=Host(`localhost`)"
+      - "traefik.http.routers.api.service=api@internal"
+      - "traefik.http.routers.api.entrypoints=traefik"
+    volumes:
+      - "/srv/traefik_letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+## Example for labels section below:
+## you need to change Host + `pl_prod` to something else
+## for local server you don't need to have redirect and can omit websecure part
+
+## labels:
+
+#   - "traefik.enable=true"
+#   - "traefik.http.routers.pl_prod_http.rule=Host(`perfectlabel.io`)"
+#   - "traefik.http.routers.pl_prod_http.entrypoints=web"
+#   - "traefik.http.routers.pl_prod_http.middlewares=pl_prod_http"
+
+## this for https:
+
+#   - "traefik.http.routers.pl_prod.entrypoints=websecure"
+#   - "traefik.http.routers.pl_prod.rule=Host(`perfectlabel.io`)"
+#   - "traefik.http.routers.pl_prod.tls.certresolver=lets"
+#   - "traefik.http.routers.pl_prod.tls=true"
+
+## redirect http => https
+#   - "traefik.http.middlewares.pl_prod_http.redirectscheme.scheme=https"

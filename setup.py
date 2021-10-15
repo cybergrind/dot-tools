@@ -71,6 +71,7 @@ kwargs.update(
                 'release.py=dot_tools.scripts.release:main',
                 'handle_envrc=dot_tools.scripts.handle_envrc:main',
                 'add_dot_files=dot_tools.scripts.add_dot_files:main',
+                'traefik_run=dot_tools.scripts.traefik_run:main',
             ]
         },
         'include_package_data': True,
