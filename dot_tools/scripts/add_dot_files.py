@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import logging
-from fan_tools.python import py_rel_path
+from fan_tools.python import rel_path
 from pathlib import Path
 
 
@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(n
 log = logging.getLogger('add_dot_files')
 
 
-TMPL_DIR = py_rel_path('../templates/')
+TMPL_DIR = rel_path('../templates/')
 
 
 TEMPLATES = {
