@@ -11,14 +11,17 @@ log = logging.getLogger('traefik_run')
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='runs local traefik')
-    parser.add_argument('cmd', nargs='?', default=['up', '-d'])
+    parser = argparse.ArgumentParser(
+        description='runs local traefik. when run command like `ps -a` just prepend `-- ps -a`'
+    )
+    parser.add_argument('cmd', nargs='*', default=['up', '-d'])
     parser.add_argument('-u', '--usage', action='store_true')
     return parser.parse_args()
 
 
 def run_traefik(args):
     compose = rel_path('../resources/traefik.compose.yaml')
+    print(f'CMD: {args}')
     cmd = ' '.join(args.cmd)
 
     full_cmd = f'docker-compose -p traefik -f {compose} {cmd}'
