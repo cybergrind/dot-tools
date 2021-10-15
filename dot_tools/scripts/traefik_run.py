@@ -38,20 +38,20 @@ HOW = '''
 
 # labels:
 
-    - "traefik.enable=true"
-    - "traefik.http.routers.pl_prod_http.rule=Host(`perfectlabel.io`)"
-    - "traefik.http.routers.pl_prod_http.entrypoints=web"
-    - "traefik.http.routers.pl_prod_http.middlewares=pl_prod_http"
+      - "traefik.enable=true"
+      - "traefik.http.routers.pl_prod_http.rule=Host(`perfectlabel.io`)"
+      - "traefik.http.routers.pl_prod_http.entrypoints=web"
 
 # this for https:
 
-    - "traefik.http.routers.pl_prod.entrypoints=websecure"
-    - "traefik.http.routers.pl_prod.rule=Host(`perfectlabel.io`)"
-    - "traefik.http.routers.pl_prod.tls.certresolver=lets"
-    - "traefik.http.routers.pl_prod.tls=true"
+      - "traefik.http.routers.pl_prod.entrypoints=websecure"
+      - "traefik.http.routers.pl_prod.rule=Host(`perfectlabel.io`)"
+      - "traefik.http.routers.pl_prod.tls.certresolver=lets"
+      - "traefik.http.routers.pl_prod.tls=true"
 
 # redirect http => https
-    - "traefik.http.middlewares.pl_prod_http.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.pl_prod_http.redirectscheme.scheme=https"
+      - "traefik.http.routers.pl_prod_http.middlewares=pl_prod_http"
 
 '''
 
