@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import argparse
 import logging
-from fan_tools.python import rel_path
 from pathlib import Path
 
+from fan_tools.python import rel_path
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(name)s: %(message)s')
 log = logging.getLogger('add_dot_files')
@@ -11,7 +11,7 @@ log = logging.getLogger('add_dot_files')
 
 TMPL_DIR = rel_path('../templates/')
 
-
+# fmt: off
 TEMPLATES = {
     TMPL_DIR / 'editorconfig.tmpl': {
         'path': Path('.editorconfig'),
@@ -22,7 +22,11 @@ TEMPLATES = {
     TMPL_DIR / 'projectile.tmpl': {
         'path': Path('.projectile'),
     },
+    TMPL_DIR / 'yamllint.tmpl': {
+        'path': Path('.yamllint'),
+    },
 }
+# fmt: on
 
 
 def parse_args():
