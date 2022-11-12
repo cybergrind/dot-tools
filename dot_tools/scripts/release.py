@@ -111,7 +111,7 @@ def pypi_publish():
 def publish():
     if exists('package.json'):
         npm_publish()
-    elif exists('setup.py'):
+    elif exists('setup.py') or exists('pyproject.toml'):
         pypi_publish()
 
 
@@ -140,7 +140,9 @@ def main():
         if not prompt('Do you want go with {!r}'.format(curr_branch)):
             exit(0)
 
-    if not exists('package.json') and not exists('setup.py'):
+    FNAMES = ['package.json', 'setup.py', 'pyproject.toml']
+
+    if not any([exists(fname) for fname in FNAMES]):
         print('We support only node/pypi libraries releases for now')
         exit(1)
 

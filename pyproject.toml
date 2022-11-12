@@ -1,11 +1,36 @@
 [project]
 name = 'dot-tools'
-version = '1.0.0'
 description = 'Dot files automation'
 author = 'cybergrind@gmail.com'
 author_email = 'cybergrind@gmail.com'
 license = 'MIT'
 url = 'https://github.com/_/dot-tools'
+reame = 'README.md'
+authors = [
+  { name = 'cybergrind', email = 'cybergrind+pypi@gmail.com' }
+]
+classifires = [
+  'Development Status :: 5 - Production/Stable',
+  'Intended Audience :: Developers',
+  'License :: OSI Approved :: MIT License',
+  'Natural Language :: English',
+  'Operating System :: OS Independent',
+  'Programming Language :: Python :: 3.8',
+  'Programming Language :: Python :: 3.9',
+  'Programming Language :: Python :: 3.10',
+  'Programming Language :: Python :: Implementation :: CPython',
+]
+dependencies = [ 'fan_tools>=3.7.0' ]
+dynamic = ["version"]
+
+[project.urls]
+github = 'https://github.com/cybergrind/dot-tools'
+
+[project.scripts]
+'release.py' = 'dot_tools.scripts.release:main'
+handle_envrc = 'dot_tools.scripts.handle_envrc:main'
+add_dot_files = 'dot_tools.scripts.add_dot_files:main'
+traefik_run = 'dot_tools.scripts.traefik_run:main'
 
 [requires]
 python_version = ['3.5', '3.6', '3.7']
@@ -16,6 +41,10 @@ build-backend = 'hatchling.build'
 
 [tool.hatch.commands]
 prerelease = 'hatch build'
+
+[tool.hatch.version]
+path = "dot_tools/__init__.py"
+
 
 [tool.black]
 line-length = 100
