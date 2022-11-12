@@ -4,7 +4,7 @@ import json
 import re
 from glob import glob
 from os.path import exists
-from subprocess import run, PIPE
+from subprocess import CalledProcessError, PIPE, run
 
 
 parser = argparse.ArgumentParser(description='release tool')
@@ -16,8 +16,7 @@ args = parser.parse_args()
 
 
 def cmd(command):
-    out = (run(command, stdout=PIPE, check=True, shell=True)
-           .stdout.decode('utf8').split('\n'))
+    out = run(command, stdout=PIPE, check=True, shell=True).stdout.decode('utf8').split('\n')
     return [x for x in out if x]
 
 
@@ -26,10 +25,13 @@ def git_file(branch, name):
 
 
 def parse_python_version(branch):
-    rex = re.compile('version=.(\d+.\d+.\d+).')
-    r = rex.findall(git_file(branch, 'setup.py'))
-    if r:
-        return r[0]
+    try:
+        rex = re.compile('version=.(\d+.\d+.\d+).')
+        r = rex.findall(git_file(branch, 'setup.py'))
+        if r:
+            return r[0]
+    except CalledProcessError:
+        pass
     rex = re.compile('__version__ = .(\d+.\d+.\d+).')
     for f in glob('*/__init__.py'):
         r = rex.findall(git_file(branch, f))
@@ -42,7 +44,7 @@ def parse_version(branch):
         return args.version
     elif exists('package.json'):
         return json.loads(git_file(branch, 'package.json'))['version']
-    elif exists('setup.py'):
+    elif exists('setup.py') or exists('pyproject.toml'):
         version = parse_python_version(branch)
         if version:
             return version
