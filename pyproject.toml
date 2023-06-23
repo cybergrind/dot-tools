@@ -31,7 +31,7 @@ github = 'https://github.com/cybergrind/dot-tools'
 handle_envrc = 'dot_tools.scripts.handle_envrc:main'
 add_dot_files = 'dot_tools.scripts.add_dot_files:main'
 traefik_run = 'dot_tools.scripts.traefik_run:main'
-cpuniq = 'dot_tools.scripts.cpuniq'
+cpuniq = 'dot_tools.scripts.cpuniq:main'
 
 [requires]
 python_version = ['3.5', '3.6', '3.7']
