@@ -38,6 +38,8 @@ def identical_files(src: Path, dst: Path):
     2. by hash
     """
     try:
+        if not dst.exists():
+            return False
         if src.stat().st_size != dst.stat().st_size:
             return False
         sha_src = run(['sha1sum', src], capture_output=True).stdout.split()[0]
@@ -91,9 +93,13 @@ def main():
     else:
         log.setLevel(logging.WARN)
 
+    dst = Path(args.dst[0])
+    if not dst.exists():
+        log.error(f'Destination does not exist: {dst}')
+        exit(1)
+
     for fname in args.files:
         src = Path(fname)
-        dst = Path(args.dst[0])
         copy(src, dst, args)
 
 
