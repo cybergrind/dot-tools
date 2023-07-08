@@ -40,6 +40,9 @@ python_version = ['3.5', '3.6', '3.7']
 requires = ['setuptools', 'wheel', 'hatchling']
 build-backend = 'hatchling.build'
 
+[tool.hatch.build]
+exclude = ['.*']
+
 [tool.hatch.commands]
 prerelease = 'hatch build'
 
