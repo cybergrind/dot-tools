@@ -41,7 +41,7 @@ requires = ['setuptools', 'wheel', 'hatchling']
 build-backend = 'hatchling.build'
 
 [tool.hatch.build]
-exclude = ['.*']
+exclude = ['.*', 'tst']
 
 [tool.hatch.commands]
 prerelease = 'hatch build'
