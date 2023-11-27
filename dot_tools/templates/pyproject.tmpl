@@ -1,6 +1,35 @@
 [tool.ruff]
 line-length = 100
+select = [
+  "E",     # pycodestyle
+  "F",     # pyflakes
+  "I",     # isort
+  "G",     # flake8-logging-format
+  "ASYNC", # flake8-async
+  "PIE",   # flake8-pie
+  "T20",   # flake8-print
+  "PT",    # flake8-pytest-style
+  "Q",     # flake8-quotes
+]
+ignore = [
+  "Q001",
+  "Q003"
+]
 
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+known-first-party = ['snapshot_manager']
+lines-after-imports = 2
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "single"
+multiline-quotes = "single"
+
+# safe to delete if you're not using black/isort for formatting
 [tool.black]
 line-length = 100
 skip-string-normalization = true
@@ -34,3 +63,5 @@ sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'OWN', 'FIRSTPARTY', 'LOCALFOLDER'
 
 known_first_party = ''
 known_own = ['pytest_tipsi_testing', 'pytest_tipsi_django', 'fan_tools']
+
+#end of black/isort section
