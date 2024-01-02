@@ -80,7 +80,7 @@ def copy(src: Path, dst_dir: Path, args):
 
     log.debug(f'Moving: {src} => {dst_path}')
     if args.mode in ['move', 'mv']:
-        src.rename(dst_path)
+        shutil.move(src, dst_path)
     else:
         shutil.copy(src, dst_path)
     return dst_path
