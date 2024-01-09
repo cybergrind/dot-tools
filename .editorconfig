@@ -9,3 +9,6 @@ max_line_length = 100
 indent_style = space
 indent_size = 4
 emacs_py_project = (f-join (projectile-project-root) ".")
+# emacs_py_env = venv
+# emacs_py_formatter = ruff
+
