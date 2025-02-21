@@ -4,7 +4,7 @@ import json
 import re
 from glob import glob
 from os.path import exists
-from subprocess import CalledProcessError, PIPE, run
+from subprocess import PIPE, CalledProcessError, run
 
 
 parser = argparse.ArgumentParser(description='release tool')
@@ -26,13 +26,13 @@ def git_file(branch, name):
 
 def parse_python_version(branch):
     try:
-        rex = re.compile('version=.(\d+.\d+.\d+).')
+        rex = re.compile(r'version=.(\d+.\d+.\d+).')
         r = rex.findall(git_file(branch, 'setup.py'))
         if r:
             return r[0]
     except CalledProcessError:
         pass
-    rex = re.compile('__version__ = .(\d+.\d+.\d+).')
+    rex = re.compile(r'__version__ = .(\d+.\d+.\d+).')
     for f in glob('*/__init__.py'):
         r = rex.findall(git_file(branch, f))
         if r:

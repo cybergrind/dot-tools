@@ -58,7 +58,7 @@ def copy(src: Path, dst_dir: Path, args):
         return None
 
     if src.parent == dst_dir:
-        log.info('File is already in target dir: {src} => {dst_dir}')
+        log.info(f'File is already in target dir: {src} => {dst_dir}')
         return src
 
     dst_path = src

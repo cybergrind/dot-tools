@@ -6,6 +6,7 @@ from itertools import chain
 from fan_tools.python import rel_path
 from fan_tools.unix import succ
 
+
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(name)s: %(message)s')
 log = logging.getLogger('traefik_run')
 
@@ -26,12 +27,12 @@ def run_traefik(args):
 
     full_cmd = f'docker-compose -p traefik -f {compose} {cmd}'
     log.debug(f'Run: {full_cmd}')
-    code, out, err = succ(full_cmd)
+    _code, out, err = succ(full_cmd)
     for line in chain(out, err):
         print(line)
 
 
-HOW = '''
+HOW = """
 # Example for labels section below:
 # you need to change Host + `pl_prod` to something else
 # for local server you don't need to have redirect and can omit websecure part
@@ -53,7 +54,7 @@ HOW = '''
       - "traefik.http.middlewares.pl_prod_http.redirectscheme.scheme=https"
       - "traefik.http.routers.pl_prod_http.middlewares=pl_prod_http"
 
-'''
+"""
 
 
 def print_how():

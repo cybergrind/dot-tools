@@ -5,6 +5,7 @@ from pathlib import Path
 
 from fan_tools.python import rel_path
 
+
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(name)s: %(message)s')
 log = logging.getLogger('add_dot_files')
 
@@ -24,6 +25,9 @@ TEMPLATES = {
     },
     TMPL_DIR / 'yamllint.tmpl': {
         'path': Path('.yamllint'),
+    },
+    TMPL_DIR / 'pre-commit-config.yaml': {
+        'path': Path('.pre-commit-config.yaml'),
     },
 }
 # fmt: on
