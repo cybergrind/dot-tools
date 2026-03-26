@@ -188,7 +188,10 @@ def main():
             f'`{ENVRC_HOME}` with correct path'
         )
         exit(1)
-    loop = asyncio.get_event_loop()
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
     loop.run_until_complete(run(args))
 
 
