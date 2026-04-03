@@ -4,7 +4,7 @@ import json
 import re
 from glob import glob
 from os.path import exists
-from subprocess import PIPE, CalledProcessError, run
+from subprocess import DEVNULL, PIPE, CalledProcessError, run
 
 
 parser = argparse.ArgumentParser(description='release tool')
@@ -15,16 +15,34 @@ parser.add_argument('branch')
 args = parser.parse_args()
 
 
-def cmd(command):
-    out = run(command, stdout=PIPE, check=True, shell=True).stdout.decode('utf8').split('\n')
+def cmd(command, stderr=None):
+    out = run(command, stdout=PIPE, stderr=stderr, check=True, shell=True).stdout.decode('utf8').split('\n')
     return [x for x in out if x]
 
 
 def git_file(branch, name):
-    return '\n'.join(cmd(f'git show {branch}:{name}'))
+    return '\n'.join(cmd(f'git show {branch}:{name}', stderr=DEVNULL))
+
+
+def parse_pyproject_version(branch):
+    """Parse version from pyproject.toml static version field."""
+    try:
+        content = git_file(branch, 'pyproject.toml')
+        rex = re.compile(r'^version\s*=\s*[\'"](\d+\.\d+\.\d+)[\'"]', re.MULTILINE)
+        r = rex.findall(content)
+        if r:
+            return r[0]
+    except CalledProcessError:
+        pass
+    return None
 
 
 def parse_python_version(branch):
+    # Try pyproject.toml static version first
+    version = parse_pyproject_version(branch)
+    if version:
+        return version
+    # Try setup.py
     try:
         rex = re.compile(r'version=.(\d+.\d+.\d+).')
         r = rex.findall(git_file(branch, 'setup.py'))
@@ -32,6 +50,7 @@ def parse_python_version(branch):
             return r[0]
     except CalledProcessError:
         pass
+    # Try __version__ in __init__.py
     rex = re.compile(r'__version__ = .(\d+.\d+.\d+).')
     for f in glob('*/__init__.py'):
         r = rex.findall(git_file(branch, f))
@@ -104,17 +123,34 @@ def npm_publish():
         commit_cmd('npm publish')
 
 
-def pypi_publish():
+def pypi_publish_uv():
+    commit_cmd('rm -rf dist/*')
+    commit_cmd('uv build')
+    commit_cmd('uv publish')
+
+
+def pypi_publish_hatch():
     commit_cmd('rm -rf dist/*')
     commit_cmd('hatch build')
     commit_cmd('hatch publish')
+
+
+def detect_python_build_tool():
+    """Detect whether to use uv or hatch for build/publish."""
+    if exists('uv.lock'):
+        return 'uv'
+    return 'hatch'
 
 
 def publish():
     if exists('package.json'):
         npm_publish()
     elif exists('setup.py') or exists('pyproject.toml'):
-        pypi_publish()
+        tool = detect_python_build_tool()
+        if tool == 'uv':
+            pypi_publish_uv()
+        else:
+            pypi_publish_hatch()
 
 
 def release_run():
