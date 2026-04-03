@@ -21,7 +21,7 @@ def cmd(command):
 
 
 def git_file(branch, name):
-    return '\n'.join(cmd('git show {}:{}'.format(branch, name)))
+    return '\n'.join(cmd(f'git show {branch}:{name}'))
 
 
 def parse_python_version(branch):
@@ -55,7 +55,7 @@ def parse_version(branch):
 
 
 def prompt(question):
-    if input('{} Y/n:\n'.format(question)).lower() == 'y':
+    if input(f'{question} Y/n:\n').lower() == 'y':
         return True
 
 
@@ -63,7 +63,7 @@ def commit_cmd(command):
     if args.commit:
         cmd(command)
     else:
-        print('Skip command: {}'.format(command))
+        print(f'Skip command: {command}')
 
 
 def get_current_branch():
@@ -75,7 +75,7 @@ def get_tag():
 
 
 def checkout(branch):
-    cmd('git checkout {}'.format(branch))
+    cmd(f'git checkout {branch}')
 
 
 def tag_exists(tag):
@@ -84,7 +84,7 @@ def tag_exists(tag):
 
 
 def merge(branch):
-    commit_cmd('git merge --ff-only {}'.format(branch))
+    commit_cmd(f'git merge --ff-only {branch}')
 
 
 def push():
@@ -92,7 +92,7 @@ def push():
 
 
 def tag_create(tag):
-    commit_cmd('git tag -am {0} {0}'.format(tag))
+    commit_cmd(f'git tag -am {tag} {tag}')
 
 
 def tags_push():
@@ -121,7 +121,7 @@ def release_run():
     tag = get_tag()
 
     if tag_exists(tag):
-        print('Tag {!r} is already exists'.format(tag))
+        print(f'Tag {tag!r} is already exists')
         exit(1)
 
     merge(args.branch)
@@ -133,18 +133,18 @@ def release_run():
 
 
 def main():
-    print('Args: {}'.format(args))
+    print(f'Args: {args}')
     curr_branch = get_current_branch()
     if curr_branch == 'HEAD':
         print('Cannot operate in detached branch')
         exit(1)
     elif curr_branch not in ('master', 'staging'):
-        if not prompt('Do you want go with {!r}'.format(curr_branch)):
+        if not prompt(f'Do you want go with {curr_branch!r}'):
             exit(0)
 
     FNAMES = ['package.json', 'setup.py', 'pyproject.toml']
 
-    if not any([exists(fname) for fname in FNAMES]):
+    if not any(exists(fname) for fname in FNAMES):
         print('We support only node/pypi libraries releases for now')
         exit(1)
 

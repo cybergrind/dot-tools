@@ -29,8 +29,8 @@ metadata-version = 2.4
 
 [dependency-groups]
 dev = [
-    'pre-commit>=4.1.0',
-    'ruff>=0.9.7',
+    'pre-commit>=4.5.1',
+    'ruff>=0.15.8',
     "tox-uv>=1.25.0",
     "tox>=4.24.1",
     "pytest>=8.3.4",
@@ -73,22 +73,27 @@ quote-style = 'single'
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
-known-first-party = ['snapshot_manager']
+known-first-party = ['dot_tools']
 lines-after-imports = 2
 
 [tool.ruff.lint]
 ignore = [
-  'T201', # print
-  'G004', # logging format
-  'Q000', # quotes
-  'Q001', # quotes
-  'Q003', # quotes
+  'T201',     # print
+  'G004',     # logging format
+  'Q000',     # quotes
+  'Q001',     # quotes
+  'Q003',     # quotes
+  'ASYNC240', # os.path in async - false positive for sync-style async functions
 ]
 fixable = ['ALL']
 select = [
   'E',     # pycodestyle
   'F',     # pyflakes
   'I',     # isort
+  'B',     # flake8-bugbear
+  'UP',    # pyupgrade
+  'C4',    # flake8-comprehensions
+  'SIM',   # flake8-simplify
   'G',     # flake8-logging-format
   'ASYNC', # flake8-async
   'PIE',   # flake8-pie
@@ -97,7 +102,7 @@ select = [
   'Q',     # flake8-quotes
   'RUF',
 ]
-exclude = ['alembic/*']
+exclude = []
 
 [tool.ruff.lint.flake8-quotes]
 docstring-quotes = 'double'

@@ -11,11 +11,11 @@ dependencies = [
 
 # installed with: uv sync
 [dependency-groups]
-dev = ['ruff', 'pre-commit>=4.1.0', 'uv>=0.6.1']
+dev = ['ruff', 'pre-commit>=4.5.1', 'uv>=0.11.1']
 
 [tool.ruff]
 line-length = 120
-target-version = 'py313'
+target-version = 'py314'
 indent-width = 4
 exclude = ['.venv', '.git']
 
@@ -40,6 +40,10 @@ select = [
   'E',     # pycodestyle
   'F',     # pyflakes
   'I',     # isort
+  'B',     # flake8-bugbear
+  'UP',    # pyupgrade
+  'C4',    # flake8-comprehensions
+  'SIM',   # flake8-simplify
   'G',     # flake8-logging-format
   'ASYNC', # flake8-async
   'PIE',   # flake8-pie
@@ -48,46 +52,9 @@ select = [
   'Q',     # flake8-quotes
   'RUF',
 ]
-exclude = ['alembic/*']
+exclude = []
 
 [tool.ruff.lint.flake8-quotes]
 docstring-quotes = 'double'
 inline-quotes = 'single'
 multiline-quotes = 'single'
-
-# safe to delete if you're not using black/isort for formatting
-[tool.black]
-line-length = 100
-skip-string-normalization = true
-skip-magic-trailing-comma = true
-target-version = ['py38']
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
-
-[tool.isort]
-combine_as_imports = true
-default_section = 'THIRDPARTY'
-force_alphabetical_sort_within_sections = true
-force_grid_wrap = 0
-include_trailing_comma = true
-line_length = 100
-lines_after_imports = 2
-multi_line_output = 3
-sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'OWN', 'FIRSTPARTY', 'LOCALFOLDER']
-
-known_first_party = ''
-known_own = ['pytest_tipsi_testing', 'pytest_tipsi_django', 'fan_tools']
-
-#end of black/isort section

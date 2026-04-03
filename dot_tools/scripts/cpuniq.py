@@ -44,9 +44,7 @@ def identical_files(src: Path, dst: Path):
             return False
         sha_src = run(['sha1sum', src], capture_output=True).stdout.split()[0]
         sha_dst = run(['sha1sum', dst], capture_output=True).stdout.split()[0]
-        if sha_src != sha_dst:
-            return False
-        return True
+        return sha_src == sha_dst
     except Exception:
         log.exception('Error while comparing files')
         return False

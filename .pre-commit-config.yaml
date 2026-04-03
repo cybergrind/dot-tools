@@ -9,7 +9,7 @@ default_stages: [pre-commit]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
       - id: detect-private-key
         exclude: "profiles-sample.pem"
@@ -27,7 +27,7 @@ repos:
       - id: check-executables-have-shebangs
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.10
+    rev: v0.15.8
     hooks:
       - id: ruff
         args: [--fix, --preview]

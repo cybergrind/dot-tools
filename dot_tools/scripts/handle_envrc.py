@@ -90,15 +90,11 @@ async def get_url():
 
 
 def has_envrc_link():
-    if os.path.exists(ENVRC) and os.path.islink(ENVRC):
-        return True
-    return False
+    return os.path.exists(ENVRC) and os.path.islink(ENVRC)
 
 
 def has_envrc_file():
-    if os.path.exists(ENVRC) and not os.path.islink(ENVRC):
-        return True
-    return False
+    return os.path.exists(ENVRC) and not os.path.islink(ENVRC)
 
 
 def envrc_exists():
@@ -132,7 +128,7 @@ def add_file(args, fname):
 
 async def link_from_shared_env(args):
     # link external files here
-    for base, dirs, files in os.walk(SHARED_DIR):
+    for base, _dirs, files in os.walk(SHARED_DIR):
         if base == SHARED_DIR:
             files = [x for x in files if x not in IGNORE_FILES]
         # print(f'Walk: {base} Dirs: {dirs} Files: {files}')
