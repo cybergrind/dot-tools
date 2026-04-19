@@ -1,5 +1,6 @@
 [project]
 name = 'dot-tools'
+version = '1.10.0'
 description = 'Dot files automation'
 author = 'cybergrind@gmail.com'
 author_email = 'cybergrind@gmail.com'
@@ -24,7 +25,6 @@ classifires = [
   'Programming Language :: Python :: Implementation :: CPython',
 ]
 dependencies = [ 'fan_tools>=3.7.0' ]
-dynamic = ['version']
 metadata-version = 2.4
 
 [dependency-groups]

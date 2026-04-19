@@ -26,14 +26,19 @@ def git_file(branch, name):
 
 def parse_pyproject_version(branch):
     """Parse version from pyproject.toml static version field."""
+    rex = re.compile(r'^version\s*=\s*[\'"](\d+\.\d+\.\d+)[\'"]', re.MULTILINE)
     try:
         content = git_file(branch, 'pyproject.toml')
-        rex = re.compile(r'^version\s*=\s*[\'"](\d+\.\d+\.\d+)[\'"]', re.MULTILINE)
         r = rex.findall(content)
         if r:
             return r[0]
     except CalledProcessError:
         pass
+    if exists('pyproject.toml'):
+        with open('pyproject.toml') as f:
+            r = rex.findall(f.read())
+            if r:
+                return r[0]
     return None
 
 
@@ -53,7 +58,10 @@ def parse_python_version(branch):
     # Try __version__ in __init__.py
     rex = re.compile(r'__version__ = .(\d+.\d+.\d+).')
     for f in glob('*/__init__.py'):
-        r = rex.findall(git_file(branch, f))
+        try:
+            r = rex.findall(git_file(branch, f))
+        except CalledProcessError:
+            continue
         if r:
             return r[0]
 
@@ -174,7 +182,7 @@ def main():
     if curr_branch == 'HEAD':
         print('Cannot operate in detached branch')
         exit(1)
-    elif curr_branch not in ('master', 'staging'):
+    elif curr_branch not in ('master', 'main', 'staging'):
         if not prompt(f'Do you want go with {curr_branch!r}'):
             exit(0)
 
