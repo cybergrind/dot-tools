@@ -29,3 +29,12 @@ repos:
         args: [--fix, --preview]
         types: [python]
       - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: pyrefly-check
+        name: pyrefly-check
+        entry: uv run pyrefly check
+        language: system
+        pass_filenames: false
+        types: [python]
