@@ -31,8 +31,8 @@ BASE_PATH = os.path.expanduser(os.environ.get(ENVRC_HOME, '~/Yandex.Disk/home/en
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(name)s: %(message)s')
 log = logging.getLogger('handle_envrc')
 ENVRC = '.envrc'
-ROOT_DIR = None
-SHARED_DIR = None
+ROOT_DIR: str = ''
+SHARED_DIR: str = ''
 IGNORE_FILES = ['url']
 
 
