@@ -16,7 +16,11 @@ args = parser.parse_args()
 
 
 def cmd(command, stderr=None):
-    out = run(command, stdout=PIPE, stderr=stderr, check=True, shell=True).stdout.decode('utf8').split('\n')
+    out = (
+        run(command, stdout=PIPE, stderr=stderr, check=True, shell=True)
+        .stdout.decode('utf8')
+        .split('\n')
+    )
     return [x for x in out if x]
 
 
@@ -163,15 +167,15 @@ def publish():
 
 def release_run():
     tag = get_tag()
-
-    if tag_exists(tag):
-        print(f'Tag {tag!r} is already exists')
-        exit(1)
+    has_tag = tag_exists(tag)
 
     merge(args.branch)
     push()
-    tag_create(tag)
-    tags_push()
+    if has_tag:
+        print(f'Tag {tag!r} already exists, skipping tag creation')
+    else:
+        tag_create(tag)
+        tags_push()
     if not args.no_upload:
         publish()
 
