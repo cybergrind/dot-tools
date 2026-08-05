@@ -1,6 +1,6 @@
 [project]
 name = 'dot-tools'
-version = '1.10.3'
+version = '1.11.0'
 description = 'Dot files automation'
 author = 'cybergrind@gmail.com'
 author_email = 'cybergrind@gmail.com'

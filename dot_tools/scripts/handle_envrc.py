@@ -14,6 +14,10 @@ Automatic mode will:
    In that case script will create link from `ENVRC_HOME` to current directory
 2. If we have `.envrc` that isn't commited and isn't a link
    Move it to `ENVRC_HOME` and replace with link
+
+`handle_envrc migrate` moves the storage from the previous location (`--old`) to the
+current `ENVRC_HOME`, re-points all symlinks found under `--root` (default: ~/devel)
+and re-approves relinked `.envrc` files with `direnv allow`.
 """
 
 import argparse
@@ -22,18 +26,21 @@ import hashlib
 import logging
 import os
 import shutil
+import sys
 
 from fan_tools.unix import ExecError, asucc
 
 
 ENVRC_HOME = 'ENVRC_HOME'
-BASE_PATH = os.path.expanduser(os.environ.get(ENVRC_HOME, '~/Yandex.Disk/home/envrc'))
+LEGACY_PATH = '~/Yandex.Disk/home/envrc'
+BASE_PATH = os.path.expanduser(os.environ.get(ENVRC_HOME, '~/.keys/envrc'))
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(name)s: %(message)s')
 log = logging.getLogger('handle_envrc')
 ENVRC = '.envrc'
 ROOT_DIR: str = ''
 SHARED_DIR: str = ''
 IGNORE_FILES = ['url']
+SKIP_DIRS = {'.git', '.venv', 'venv', 'node_modules', '__pycache__', '.cache', '.tox', '.mypy_cache'}
 
 
 def set_root_dir():
@@ -66,6 +73,26 @@ def parse_args():
     parser.add_argument('-m', '--mode', default='auto', choices=['auto'])
     parser.add_argument('file', nargs='?', help='File to store not in git')
     return parser.parse_args()
+
+
+def parse_migrate_args(argv):
+    parser = argparse.ArgumentParser(
+        prog='handle_envrc migrate',
+        description=f'Move shared storage to `{ENVRC_HOME}` location and re-point all symlinks',
+    )
+    parser.add_argument('--old', default=LEGACY_PATH, help='previous storage location')
+    parser.add_argument(
+        '--root',
+        dest='roots',
+        action='append',
+        help='where to search for symlinks, repeatable (default: ~/devel)',
+    )
+    parser.add_argument('--max-depth', type=int, default=6)
+    parser.add_argument('--dry-run', action='store_true')
+    args = parser.parse_args(argv)
+    if not args.roots:
+        args.roots = ['~/devel']
+    return args
 
 
 def move_and_link():
@@ -151,6 +178,62 @@ async def link_from_shared_env(args):
                         await asucc(f'direnv allow {ldir}')
 
 
+def iter_symlinks(roots, max_depth):
+    for root in roots:
+        root = os.path.abspath(os.path.expanduser(root))
+        base_depth = root.rstrip('/').count('/')
+        for base, dirs, files in os.walk(root):
+            if base.count('/') - base_depth >= max_depth:
+                dirs[:] = []
+            else:
+                dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+            for fname in files:
+                fpath = os.path.join(base, fname)
+                if os.path.islink(fpath):
+                    yield fpath
+
+
+async def migrate(args):
+    old = os.path.abspath(os.path.expanduser(args.old))
+    new = BASE_PATH
+    if os.path.realpath(old) == os.path.realpath(new):
+        log.error(f'Old and new locations are the same: {old}. Set `{ENVRC_HOME}`?')
+        exit(1)
+    if not os.path.exists(old) and not os.path.exists(new):
+        log.error(f'Neither {old} nor {new} exists. Nothing to migrate')
+        exit(1)
+
+    if os.path.exists(old):
+        print(f'Copy storage: {old} => {new}')
+        if not args.dry_run:
+            shutil.copytree(old, new, dirs_exist_ok=True)
+
+    prefix = old.rstrip('/') + '/'
+    relinked, allowed, missing = 0, 0, 0
+    for fpath in iter_symlinks(args.roots, args.max_depth):
+        target = os.readlink(fpath)
+        if not target.startswith(prefix):
+            continue
+        new_target = os.path.join(new, target[len(prefix) :])
+        if not os.path.exists(new_target) and not args.dry_run:
+            log.warning(f'No migrated target for {fpath}: {new_target}')
+            missing += 1
+            continue
+        print(f'Relink: {fpath} => {new_target}')
+        relinked += 1
+        if os.path.basename(fpath) == ENVRC:
+            allowed += 1
+        if not args.dry_run:
+            os.remove(fpath)
+            os.symlink(new_target, fpath)
+            if os.path.basename(fpath) == ENVRC:
+                await asucc(f'direnv allow {fpath}')
+    action = 'Would relink' if args.dry_run else 'Relinked'
+    print(f'{action}: {relinked} direnv allowed: {allowed} missing targets: {missing}')
+    if not args.dry_run and relinked:
+        print(f'Old storage left untouched: {old}. Remove it manually after checking all machines')
+
+
 async def run(args):
     url = await get_url()
     if url is None:
@@ -176,7 +259,20 @@ async def run(args):
         await link_from_shared_env(args)
 
 
+def get_loop():
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+    return loop
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == 'migrate':
+        args = parse_migrate_args(sys.argv[2:])
+        get_loop().run_until_complete(migrate(args))
+        return
+
     args = parse_args()
     if not os.path.exists(BASE_PATH):
         log.error(
@@ -184,11 +280,7 @@ def main():
             f'`{ENVRC_HOME}` with correct path'
         )
         exit(1)
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-    loop.run_until_complete(run(args))
+    get_loop().run_until_complete(run(args))
 
 
 if __name__ == '__main__':

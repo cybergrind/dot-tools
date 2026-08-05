@@ -19,7 +19,10 @@ traefik_run -- down
 
 ### `handle_envrc`
 Keeps `.envrc` files synced across machines through a shared folder
-(set `ENVRC_HOME`, defaults to `~/Yandex.Disk/home/envrc`).
+(set `ENVRC_HOME`, defaults to `~/.keys/envrc`).
+`handle_envrc migrate` moves storage from the old location (`--old`, defaults to
+`~/Yandex.Disk/home/envrc`) to `ENVRC_HOME`, re-points all symlinks under `--root`
+(default: `~/devel`) and re-approves them with `direnv allow`.
 If the local `.envrc` isn't a symlink yet, it moves it into the shared dir
 and replaces it with a link. If a shared one exists but the link is missing, it restores it.
 
