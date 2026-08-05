@@ -22,6 +22,7 @@ and re-approves relinked `.envrc` files with `direnv allow`.
 
 import argparse
 import asyncio
+import filecmp
 import hashlib
 import logging
 import os
@@ -193,6 +194,20 @@ def iter_symlinks(roots, max_depth):
                     yield fpath
 
 
+def storage_diff(old, new):
+    only_old, differs = [], []
+    for base, _dirs, files in os.walk(old):
+        for fname in files:
+            src = os.path.join(base, fname)
+            rel = os.path.relpath(src, old)
+            tgt = os.path.join(new, rel)
+            if not os.path.exists(tgt):
+                only_old.append(rel)
+            elif not filecmp.cmp(src, tgt, shallow=False):
+                differs.append(rel)
+    return only_old, differs
+
+
 async def migrate(args):
     old = os.path.abspath(os.path.expanduser(args.old))
     new = BASE_PATH
@@ -204,9 +219,18 @@ async def migrate(args):
         exit(1)
 
     if os.path.exists(old):
-        print(f'Copy storage: {old} => {new}')
-        if not args.dry_run:
-            shutil.copytree(old, new, dirs_exist_ok=True)
+        if not os.path.exists(new):
+            print(f'Copy storage: {old} => {new}')
+            if not args.dry_run:
+                shutil.copytree(old, new)
+        else:
+            only_old, differs = storage_diff(old, new)
+            for rel in only_old:
+                log.warning(f'Only in old storage: {os.path.join(old, rel)}')
+            for rel in differs:
+                log.warning(f'Differs between storages: {rel}')
+            if not (only_old or differs):
+                print(f'Storage already migrated: {new} matches {old}')
 
     prefix = old.rstrip('/') + '/'
     relinked, allowed, missing = 0, 0, 0
